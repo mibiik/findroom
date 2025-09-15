@@ -5,6 +5,7 @@ import { ExplorePage } from './components/ExplorePage';
 import { RoommatePage } from './components/RoommatePage';
 import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon } from './components/icons';
 import { getListings, saveListing, getRoommateSearches, saveRoommateSearch } from './firebase/firestoreService';
+import { Analytics } from '@vercel/analytics/react';
 
 type View = 'my-listing' | 'explore' | 'roommate';
 
@@ -236,6 +237,7 @@ export default function App() {
                    {isInitialized ? renderView() : <div className="text-center p-10">Yükleniyor...</div>}
                 </div>
             </main>
+            <Analytics />
         </div>
     );
 }
