@@ -174,6 +174,23 @@ export default function App() {
         const id = setInterval(fetchNow, 5000);
         return () => { isCancelled = true; clearInterval(id); };
     }, [currentView]);
+
+    // Periodically refresh listings while on my-listing view to keep matches current
+    useEffect(() => {
+        if (currentView !== 'my-listing') return;
+        let isCancelled = false;
+        const fetchNow = async () => {
+            try {
+                const fresh = await getListings();
+                if (!isCancelled) setListings(fresh);
+            } catch (e) {
+                console.error('Failed to refresh listings', e);
+            }
+        };
+        fetchNow();
+        const id = setInterval(fetchNow, 5000);
+        return () => { isCancelled = true; clearInterval(id); };
+    }, [currentView]);
     
     const myListing = listings.find(l => l.id === myListingId) || null;
 
