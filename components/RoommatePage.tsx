@@ -272,6 +272,12 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
           <p className="mt-2 text-gray-500">
             Aynı odada kalan diğer öğrencileri bulmak için yukarıdaki formu doldurun.
           </p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="mt-5 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Arama Oluştur
+          </button>
         </div>
       )}
     </div>
