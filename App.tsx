@@ -29,7 +29,7 @@ export default function App() {
     const [myListingId, setMyListingId] = useState<string | null>(null);
     const [roommateSearches, setRoommateSearches] = useState<RoommateSearch[]>([]);
     const [myRoommateSearchId, setMyRoommateSearchId] = useState<string | null>(null);
-    const [currentView, setCurrentView] = useState<View>('my-listing');
+    const [currentView, setCurrentView] = useState<View>('explore');
     const [isInitialized, setIsInitialized] = useState(false);
     
     useEffect(() => {
@@ -75,11 +75,8 @@ export default function App() {
             } catch (error) {
                 console.error("Failed to load roommate searches:", error);
             }
-            // Restore last visited view (Eşleşmelerim / Keşfet / Oda Arkadaşı Bul)
-            const savedView = localStorage.getItem('dorm-swap-view');
-            if (savedView === 'my-listing' || savedView === 'explore' || savedView === 'roommate') {
-                setCurrentView(savedView as View);
-            }
+            // Always start on Keşfet
+            setCurrentView('explore');
             setIsInitialized(true);
         };
         initializeApp();
@@ -98,8 +95,7 @@ export default function App() {
                 localStorage.removeItem('dorm-swap-roommate-id');
             }
         }
-        // Persist current view selection so user's navigation state is remembered
-        try { localStorage.setItem('dorm-swap-view', currentView); } catch {}
+        // We intentionally do not persist view to always open Keşfet on reload
     }, [myListingId, myRoommateSearchId, currentView, isInitialized]);
 
     const addOrUpdateListing = useCallback(async (newListing: Listing) => {
@@ -229,7 +225,7 @@ export default function App() {
                                isActive={currentView === 'roommate'}
                                onClick={() => setCurrentView('roommate')}
                                icon={<UserGroupIcon className="w-5 h-5 sm:w-6 sm:h-6" />}
-                               label="Oda Arkadaşı Bul"
+                               label="Oda Arkadaşını Bul"
                            />
                         </div>
                     </div>

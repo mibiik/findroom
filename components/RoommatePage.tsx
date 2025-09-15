@@ -271,7 +271,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
           <div className="flex justify-center items-center mx-auto w-16 h-16 bg-indigo-100 rounded-full">
             <UserGroupIcon className="w-8 h-8 text-indigo-600"/>
           </div>
-          <h2 className="mt-4 text-lg font-bold text-gray-800">Oda Arkadaşı Bulmak İçin Arama Oluşturun</h2>
+          <h2 className="mt-4 text-lg font-bold text-gray-800">Oda Arkadaşını Bulmak İçin Arama Oluşturun</h2>
           <p className="mt-2 text-gray-500">
             Aynı odada kalan diğer öğrencileri bulmak için yukarıdaki formu doldurun.
           </p>
