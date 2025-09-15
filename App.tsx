@@ -37,7 +37,16 @@ export default function App() {
             const listingsFromDb = await getListings();
             setListings(listingsFromDb);
             const roommateFromDb = await getRoommateSearches();
-            setRoommateSearches(roommateFromDb);
+            // Load my roommate search from localStorage and merge for immediate UX
+            let localMySearch: RoommateSearch | null = null;
+            try {
+                const raw = localStorage.getItem('my-roommate-search');
+                localMySearch = raw ? (JSON.parse(raw) as RoommateSearch) : null;
+            } catch {}
+            const merged = localMySearch && !roommateFromDb.find(s => s.id === localMySearch!.id)
+                ? [localMySearch, ...roommateFromDb]
+                : roommateFromDb;
+            setRoommateSearches(merged);
             const savedMyId = localStorage.getItem('dorm-swap-my-id');
             if (savedMyId) {
                 setMyListingId(savedMyId);
@@ -45,6 +54,8 @@ export default function App() {
             const savedRoommateId = localStorage.getItem('dorm-swap-roommate-id');
             if (savedRoommateId) {
                 setMyRoommateSearchId(savedRoommateId);
+            } else if (localMySearch) {
+                setMyRoommateSearchId(localMySearch.id);
             }
             // Load roommate searches from localStorage
             try {
@@ -116,6 +127,8 @@ export default function App() {
             return [normalized, ...prev].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         });
         setMyRoommateSearchId(normalized.id);
+        // Persist my latest roommate search locally for quick restore
+        try { localStorage.setItem('my-roommate-search', JSON.stringify(normalized)); } catch {}
 
         try {
             await saveRoommateSearch(normalized);
