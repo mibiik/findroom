@@ -35,7 +35,18 @@ export default function App() {
     useEffect(() => {
         const initializeApp = async () => {
             const listingsFromDb = await getListings();
-            setListings(listingsFromDb);
+            // Merge my local listing (if any) so it appears immediately after refresh
+            let mergedListings = listingsFromDb;
+            try {
+                const rawMyListing = localStorage.getItem('my-listing');
+                if (rawMyListing) {
+                    const localListing = JSON.parse(rawMyListing) as Listing;
+                    if (!listingsFromDb.find(l => l.id === localListing.id)) {
+                        mergedListings = [localListing, ...listingsFromDb];
+                    }
+                }
+            } catch {}
+            setListings(mergedListings);
             const roommateFromDb = await getRoommateSearches();
             // Load my roommate search from localStorage and merge for immediate UX
             let localMySearch: RoommateSearch | null = null;
@@ -103,6 +114,8 @@ export default function App() {
             return [newListing, ...prev].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         });
         setMyListingId(newListing.id);
+        // Persist my listing locally so it survives refresh
+        try { localStorage.setItem('my-listing', JSON.stringify(newListing)); } catch {}
 
         // Save to Firestore
         try {
