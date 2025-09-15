@@ -64,6 +64,11 @@ export default function App() {
             } catch (error) {
                 console.error("Failed to load roommate searches:", error);
             }
+            // Restore last visited view (Eşleşmelerim / Keşfet / Oda Arkadaşı Bul)
+            const savedView = localStorage.getItem('dorm-swap-view');
+            if (savedView === 'my-listing' || savedView === 'explore' || savedView === 'roommate') {
+                setCurrentView(savedView as View);
+            }
             setIsInitialized(true);
         };
         initializeApp();
@@ -82,7 +87,9 @@ export default function App() {
                 localStorage.removeItem('dorm-swap-roommate-id');
             }
         }
-    }, [myListingId, myRoommateSearchId, isInitialized]);
+        // Persist current view selection so user's navigation state is remembered
+        try { localStorage.setItem('dorm-swap-view', currentView); } catch {}
+    }, [myListingId, myRoommateSearchId, currentView, isInitialized]);
 
     const addOrUpdateListing = useCallback(async (newListing: Listing) => {
         // Optimistic UI update for a responsive feel
