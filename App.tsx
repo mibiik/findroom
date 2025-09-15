@@ -94,8 +94,12 @@ export default function App() {
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-10 border-b border-gray-200">
                 <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-                    <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-                        <div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg w-full sm:w-auto justify-center sm:justify-end">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <img src="/Gemini_Generated_Image_fp0o1ufp0o1ufp0o.png" alt="DormSwap" className="h-8 w-8 rounded" />
+                            <span className="text-lg font-extrabold tracking-tight">Dorm Swap</span>
+                        </div>
+                        <div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
                            <NavButton
                                isActive={currentView === 'my-listing'}
                                onClick={() => setCurrentView('my-listing')}
