@@ -174,8 +174,8 @@ export default function App() {
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-10 border-b border-gray-200">
                 <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-                    <div className="flex items-center justify-center">
-                        <div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
+                    <div className="flex items-center justify-center w-full">
+                        <div className="flex flex-wrap items-center gap-1 bg-gray-100 p-1 rounded-lg w-full sm:w-auto justify-center">
                            <NavButton
                                isActive={currentView === 'my-listing'}
                                onClick={() => setCurrentView('my-listing')}
