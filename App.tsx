@@ -237,6 +237,20 @@ export default function App() {
                    {isInitialized ? renderView() : <div className="text-center p-10">Yükleniyor...</div>}
                 </div>
             </main>
+            
+            {/* Buy Me a Coffee Button */}
+            <div className="fixed bottom-4 right-4 z-50">
+                <a
+                    href="https://www.buymeacoffee.com/yourusername"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-full shadow-lg transition-colors duration-200 text-sm font-medium"
+                >
+                    <span>☕</span>
+                    <span className="hidden sm:inline">Buy me a coffee</span>
+                </a>
+            </div>
+            
             <Analytics />
         </div>
     );
