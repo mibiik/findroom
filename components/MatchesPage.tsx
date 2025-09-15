@@ -43,9 +43,9 @@ export const MatchesPage: React.FC<MatchesPageProps> = ({ listings, myListingId 
         <div className="flex justify-center items-center mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-indigo-100 rounded-full">
             <PlusCircleIcon className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600"/>
         </div>
-        <h2 className="mt-3 sm:mt-4 text-lg sm:text-xl font-bold text-gray-800">Eşleşmeleri Görmek İçin İlan Oluşturun</h2>
+        <h2 className="mt-3 sm:mt-4 text-lg sm:text-xl font-bold text-gray-800">Eşleşmeleri Görmek İçin Talep Oluşturun</h2>
         <p className="mt-2 text-sm sm:text-base text-gray-500 px-2">
-          Size uygun takasları bulabilmemiz için lütfen "İlan Oluştur" sekmesinden kendi yurt bilgilerinizi girin.
+          Size uygun takasları bulabilmemiz için lütfen "Talep Oluştur" sekmesinden kendi yurt bilgilerinizi girin.
         </p>
       </div>
     );

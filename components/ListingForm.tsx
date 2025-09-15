@@ -68,10 +68,10 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAddListing, myListin
   
   const FormSuccess = () => (
       <div className="text-center p-6 sm:p-8 bg-white rounded-xl shadow-sm border border-gray-200">
-        <h2 className="text-xl sm:text-2xl font-bold text-green-600 mb-3 sm:mb-4">İlanınız {myListing ? 'Güncellendi' : 'Oluşturuldu'}!</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-green-600 mb-3 sm:mb-4">Talebiniz {myListing ? 'Güncellendi' : 'Oluşturuldu'}!</h2>
         <p className="text-sm sm:text-base text-gray-600 px-2">Artık "Keşfet" sayfasından diğer ilanlara göz atabilir veya "Eşleşmelerim" sayfasından size uygun kişileri görebilirsiniz.</p>
         <button onClick={() => setShowForm(true)} className="mt-4 sm:mt-6 px-4 sm:px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-sm sm:text-base">
-          İlanı Düzenle
+          Talebi Düzenle
         </button>
       </div>
   )
@@ -117,7 +117,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAddListing, myListin
           disabled={isSubmitting}
           className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 disabled:bg-indigo-400 disabled:cursor-not-allowed text-sm sm:text-base"
         >
-          {isSubmitting ? 'Kaydediliyor...' : (myListing ? 'İlanı Güncelle' : 'İlan Oluştur')}
+          {isSubmitting ? 'Kaydediliyor...' : (myListing ? 'İlanı Güncelle' : 'Talep Oluştur')}
         </button>
       </div>
     </form>

@@ -105,12 +105,12 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* İlan Oluşturma/Düzenleme Bölümü */}
+      {/* Talep Oluşturma/Düzenleme Bölümü */}
       {showForm && (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center mb-6">
             <PlusCircleIcon className="w-6 h-6 text-indigo-600 mr-3"/>
-            <h2 className="text-xl font-bold text-gray-900">{myListing ? 'İlanı Düzenle' : 'İlan Oluştur'}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{myListing ? 'İlanı Düzenle' : 'Talep Oluştur'}</h2>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <DormFieldSet title="Mevcut Yurt Bilgilerim" isDesired={false} values={currentDorm} onChange={handleCurrentDormChange} />
@@ -157,7 +157,7 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
                 disabled={isSubmitting}
                 className="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 disabled:bg-indigo-400 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Kaydediliyor...' : (myListing ? 'İlanı Güncelle' : 'İlan Oluştur')}
+                {isSubmitting ? 'Kaydediliyor...' : (myListing ? 'İlanı Güncelle' : 'Talep Oluştur')}
               </button>
             </div>
           </form>

@@ -37,7 +37,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChang
     <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 mb-6 sm:mb-8">
       <div className="flex items-center mb-4 sm:mb-5">
         <SearchIcon className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 mr-2 sm:mr-3"/>
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900">İlanları Filtrele</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">İlanları/Talepleri Filtrele</h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <SelectInput 
