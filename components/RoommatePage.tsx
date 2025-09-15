@@ -160,7 +160,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
                   value={formData.contactInfo}
                   onChange={(e) => handleInputChange('contactInfo', e.target.value)}
                   className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Örn: Instagram: @kullaniciadi ve  Tel No: 555 555 55 55"
+                  placeholder="Bir iletişim bilgisi giriniz."
                   required
                 />
               </div>

@@ -125,7 +125,7 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
                   onChange={(e) => setCurrentDormDetails(e.target.value)}
                   rows={3}
                   className="mt-1 block w-full p-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                  placeholder="Örn: Odam güney cepheli ve aydınlık."
+                  placeholder="Eklemek istediğiniz detayları giriniz."
                 />
               </div>
               <div>
@@ -136,7 +136,7 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
                   value={contactInfo}
                   onChange={(e) => setContactInfo(e.target.value)}
                   className="mt-1 block w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                  placeholder="Örn: Telegram: @kullaniciadi veya email@adresim.com"
+                  placeholder="Örn: Instagram: @kullaniciadi veya email@adresim.com"
                   required
                 />
               </div>
