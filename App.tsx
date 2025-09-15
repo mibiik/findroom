@@ -99,25 +99,48 @@ export default function App() {
     }, []);
 
     const addOrUpdateRoommateSearch = useCallback(async (newSearch: RoommateSearch) => {
+        const normalized: RoommateSearch = {
+            ...newSearch,
+            building: newSearch.building.trim().toUpperCase(),
+            roomNumber: newSearch.roomNumber.trim(),
+            contactInfo: newSearch.contactInfo.trim(),
+        };
         // Optimistic UI update for a responsive feel
         setRoommateSearches(prev => {
-            const existingIndex = prev.findIndex(s => s.id === newSearch.id);
+            const existingIndex = prev.findIndex(s => s.id === normalized.id);
             if (existingIndex > -1) {
                 const updatedSearches = [...prev];
-                updatedSearches[existingIndex] = newSearch;
+                updatedSearches[existingIndex] = normalized;
                 return updatedSearches;
             }
-            return [newSearch, ...prev].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            return [normalized, ...prev].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         });
-        setMyRoommateSearchId(newSearch.id);
+        setMyRoommateSearchId(normalized.id);
 
         try {
-            await saveRoommateSearch(newSearch);
+            await saveRoommateSearch(normalized);
         } catch (error) {
             console.error("Failed to save roommate search:", error);
             alert("Arama kaydedilemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.");
         }
     }, []);
+
+    // Periodically refresh roommate searches while on roommate view to reflect others' submissions
+    useEffect(() => {
+        if (currentView !== 'roommate') return;
+        let isCancelled = false;
+        const fetchNow = async () => {
+            try {
+                const fresh = await getRoommateSearches();
+                if (!isCancelled) setRoommateSearches(fresh);
+            } catch (e) {
+                console.error('Failed to refresh roommate searches', e);
+            }
+        };
+        fetchNow();
+        const id = setInterval(fetchNow, 5000);
+        return () => { isCancelled = true; clearInterval(id); };
+    }, [currentView]);
     
     const myListing = listings.find(l => l.id === myListingId) || null;
 

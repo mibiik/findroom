@@ -34,12 +34,12 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
   const roomMatches = useMemo(() => {
     if (!myRoommateSearch) return [];
     
-    return roommateSearches.filter(search => 
-      search.id !== myRoommateSearch.id &&
-      search.campus === myRoommateSearch.campus &&
-      search.building === myRoommateSearch.building &&
-      search.roomNumber === myRoommateSearch.roomNumber
-    );
+    return roommateSearches.filter(search => {
+      const sameCampus = search.campus === myRoommateSearch.campus;
+      const sameBuilding = search.building.trim().toUpperCase() === myRoommateSearch.building.trim().toUpperCase();
+      const sameRoom = search.roomNumber.trim() === myRoommateSearch.roomNumber.trim();
+      return search.id !== myRoommateSearch.id && sameCampus && sameBuilding && sameRoom;
+    });
   }, [roommateSearches, myRoommateSearch]);
 
   const handleInputChange = (field: keyof RoommateSearchForm, value: string) => {
@@ -74,8 +74,8 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
       id: myRoommateSearch?.id || `roommate-${Date.now()}`,
       contactInfo: formData.contactInfo.trim(),
       campus: formData.campus as Campus,
-      building: formData.building,
-      roomNumber: formData.roomNumber,
+      building: normalize(formData.building),
+      roomNumber: formData.roomNumber.trim(),
       createdAt: myRoommateSearch?.createdAt || new Date().toISOString(),
     };
 
@@ -94,6 +94,9 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
   const getBuildingOptions = () => {
     return formData.campus === Campus.West ? WEST_BUILDINGS : MAIN_BUILDINGS;
   };
+
+  // Normalize before submit to avoid casing/whitespace mismatches
+  const normalize = (v: string) => v.trim().toUpperCase();
 
   return (
     <div className="space-y-8">
@@ -144,7 +147,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
                   value={formData.roomNumber}
                   onChange={(e) => handleInputChange('roomNumber', e.target.value)}
                   className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Örn: 101, 205, A12"
+                  placeholder="Örn: 101, 205"
                   disabled={!formData.building}
                   required
                 />
@@ -157,7 +160,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
                   value={formData.contactInfo}
                   onChange={(e) => handleInputChange('contactInfo', e.target.value)}
                   className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Örn: Telegram: @kullaniciadi"
+                  placeholder="Örn: Instagram: @kullaniciadi ve  Tel No: 555 555 55 55"
                   required
                 />
               </div>
