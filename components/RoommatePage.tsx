@@ -9,7 +9,7 @@ interface RoommatePageProps {
 }
 
 const WEST_BUILDINGS = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B'];
-const MAIN_BUILDINGS = ['Henry Ford', ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))]; // Henry Ford + A-Z
+const MAIN_BUILDINGS = ['Henry Ford A', 'Henry Ford B', ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))]; // Henry Ford A/B + A-Z
 
 export const RoommatePage: React.FC<RoommatePageProps> = ({ 
   roommateSearches, 
