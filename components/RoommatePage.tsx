@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { RoommateSearch, RoommateSearchForm, Campus } from '../types';
+import { Campus, type RoommateSearch, type RoommateSearchForm } from '../types';
 import { UserGroupIcon, PlusCircleIcon } from './icons';
 
 interface RoommatePageProps {

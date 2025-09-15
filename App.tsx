@@ -4,7 +4,7 @@ import { MyListingPage } from './components/MyListingPage';
 import { ExplorePage } from './components/ExplorePage';
 import { RoommatePage } from './components/RoommatePage';
 import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon } from './components/icons';
-import { getListings, saveListing } from './firebase/firestoreService';
+import { getListings, saveListing, getRoommateSearches, saveRoommateSearch } from './firebase/firestoreService';
 
 type View = 'my-listing' | 'explore' | 'roommate';
 
@@ -36,6 +36,8 @@ export default function App() {
         const initializeApp = async () => {
             const listingsFromDb = await getListings();
             setListings(listingsFromDb);
+            const roommateFromDb = await getRoommateSearches();
+            setRoommateSearches(roommateFromDb);
             const savedMyId = localStorage.getItem('dorm-swap-my-id');
             if (savedMyId) {
                 setMyListingId(savedMyId);
@@ -109,12 +111,8 @@ export default function App() {
         });
         setMyRoommateSearchId(newSearch.id);
 
-        // For now, just store in localStorage (you can add Firestore later)
         try {
-            const existingSearches = JSON.parse(localStorage.getItem('roommate-searches') || '[]');
-            const updatedSearches = existingSearches.filter((s: RoommateSearch) => s.id !== newSearch.id);
-            updatedSearches.unshift(newSearch);
-            localStorage.setItem('roommate-searches', JSON.stringify(updatedSearches));
+            await saveRoommateSearch(newSearch);
         } catch (error) {
             console.error("Failed to save roommate search:", error);
             alert("Arama kaydedilemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.");
