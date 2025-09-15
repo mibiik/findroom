@@ -1,0 +1,34 @@
+/* Custom CSS for DormSwap app */
+
+/* Add xs breakpoint for very small screens */
+@media (min-width: 475px) {
+  .xs\:inline {
+    display: inline;
+  }
+}
+
+/* Ensure proper text wrapping and prevent overflow */
+.break-words {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+/* Ensure proper scrolling on mobile */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Improve touch targets for mobile */
+button, input, select, textarea {
+  min-height: 44px;
+}
+
+@media (max-width: 640px) {
+  button, input, select, textarea {
+    min-height: 40px;
+  }
+}

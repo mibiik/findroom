@@ -1,0 +1,5 @@
+{
+  "name": "Dorm Swap",
+  "description": "A web application designed to help university students find and swap their dormitory rooms. Users can post their current room details, specify their desired room, and browse listings to find a perfect match.",
+  "requestFramePermissions": []
+}
