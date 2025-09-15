@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, setDoc, query, orderBy } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { db } from './config';
 import type { Listing, RoommateSearch } from '../types';
 
@@ -48,6 +48,16 @@ export const saveRoommateSearch = async (search: RoommateSearch): Promise<void> 
         await setDoc(docRef, search);
     } catch (error) {
         console.error('Error saving roommate search:', error);
+        throw error;
+    }
+};
+
+export const deleteListing = async (listingId: string): Promise<void> => {
+    try {
+        const listingDocRef = doc(db, 'listings', listingId);
+        await deleteDoc(listingDocRef);
+    } catch (error) {
+        console.error("Error deleting listing: ", error);
         throw error;
     }
 };

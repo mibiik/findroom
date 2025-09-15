@@ -4,7 +4,7 @@ import { MyListingPage } from './components/MyListingPage';
 import { ExplorePage } from './components/ExplorePage';
 import { RoommatePage } from './components/RoommatePage';
 import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon } from './components/icons';
-import { getListings, saveListing, getRoommateSearches, saveRoommateSearch } from './firebase/firestoreService';
+import { getListings, saveListing, deleteListing, getRoommateSearches, saveRoommateSearch } from './firebase/firestoreService';
 import { Analytics } from '@vercel/analytics/react';
 
 type View = 'my-listing' | 'explore' | 'roommate';
@@ -155,6 +155,28 @@ export default function App() {
         }
     }, []);
 
+    const deleteListingHandler = useCallback(async (listingId: string) => {
+        try {
+            // Optimistic UI update
+            setListings(prev => prev.filter(l => l.id !== listingId));
+            
+            // If this was my listing, clear my listing ID
+            if (listingId === myListingId) {
+                setMyListingId(null);
+                localStorage.removeItem('my-listing');
+            }
+            
+            // Delete from Firestore
+            await deleteListing(listingId);
+        } catch (error) {
+            console.error("Failed to delete listing:", error);
+            alert("İlan silinemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.");
+            // Revert optimistic update by refetching from DB
+            const listingsFromDb = await getListings();
+            setListings(listingsFromDb);
+        }
+    }, [myListingId]);
+
     // Periodically refresh roommate searches while on roommate view to reflect others' submissions
     useEffect(() => {
         if (currentView !== 'roommate') return;
@@ -194,13 +216,13 @@ export default function App() {
     const renderView = () => {
         switch (currentView) {
             case 'my-listing':
-                return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} />;
+                return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} />;
             case 'explore':
-                return <ExplorePage listings={listings} myListingId={myListingId} />;
+                return <ExplorePage listings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} />;
             case 'roommate':
                 return <RoommatePage roommateSearches={roommateSearches} onAddRoommateSearch={addOrUpdateRoommateSearch} myRoommateSearchId={myRoommateSearchId} />;
             default:
-                return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} />;
+                return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} />;
         }
     };
 

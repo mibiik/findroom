@@ -7,6 +7,8 @@ import { DormInfoCard } from './DormInfoCard';
 interface ListingCardProps {
   listing: Listing;
   emphasizeDescription?: boolean;
+  isOwnListing?: boolean;
+  onDeleteListing?: (listingId: string) => void;
 }
 
 // Pastel renk paleti - her ilan için farklı renk
@@ -32,12 +34,29 @@ const getPastelColor = (id: string) => {
   return colors[Math.abs(hash) % colors.length];
 };
 
-export const ListingCard: React.FC<ListingCardProps> = ({ listing, emphasizeDescription = false }) => {
+export const ListingCard: React.FC<ListingCardProps> = ({ listing, emphasizeDescription = false, isOwnListing = false, onDeleteListing }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const pastelColor = getPastelColor(listing.id);
 
   return (
-    <div className={`${pastelColor} rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border-2`}>
+    <div className={`${pastelColor} rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border-2 ${isOwnListing ? 'ring-2 ring-indigo-300' : ''}`}>
+      {isOwnListing && (
+        <div className="bg-indigo-600 text-white px-4 py-2 flex items-center justify-between">
+          <span className="font-semibold text-sm">Sizin talebiniz</span>
+          {onDeleteListing && (
+            <button
+              onClick={() => {
+                if (window.confirm('Talebinizi silmek istediğinizden emin misiniz?')) {
+                  onDeleteListing(listing.id);
+                }
+              }}
+              className="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded transition-colors duration-200"
+            >
+              Talebi Sil
+            </button>
+          )}
+        </div>
+      )}
       <div className="p-4 sm:p-6">
         {!!listing.currentDormDetails && (
           <div className="mb-3 sm:mb-4">

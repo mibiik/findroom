@@ -10,6 +10,7 @@ interface MyListingPageProps {
   myListing: Listing | null;
   allListings: Listing[];
   myListingId: string | null;
+  onDeleteListing?: (listingId: string) => void;
 }
 
 const initialCurrentDorm: SpecificDormInfo = {
@@ -40,7 +41,8 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
   onAddListing, 
   myListing, 
   allListings, 
-  myListingId 
+  myListingId,
+  onDeleteListing
 }) => {
   const [currentDorm, setCurrentDorm] = useState<SpecificDormInfo>(myListing?.currentDorm ?? initialCurrentDorm);
   const [desiredDorm, setDesiredDorm] = useState<DesiredDormInfo>(myListing?.desiredDorm ?? initialDesiredDorm);
@@ -205,7 +207,7 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
               Düzenle
             </button>
           </div>
-          <ListingCard listing={myListing} />
+          <ListingCard listing={myListing} isOwnListing={true} onDeleteListing={onDeleteListing} />
         </div>
       )}
     </div>

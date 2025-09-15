@@ -8,6 +8,7 @@ import { SearchIcon } from './icons';
 interface ExplorePageProps {
   listings: Listing[];
   myListingId: string | null;
+  onDeleteListing?: (listingId: string) => void;
 }
 
 const initialFilters: FilterCriteria = {
@@ -26,7 +27,7 @@ const dormMatchesFilter = (listing: Listing, filters: FilterCriteria): boolean =
     return true;
 };
 
-export const ExplorePage: React.FC<ExplorePageProps> = ({ listings, myListingId }) => {
+export const ExplorePage: React.FC<ExplorePageProps> = ({ listings, myListingId, onDeleteListing }) => {
   const [filters, setFilters] = useState<FilterCriteria>(initialFilters);
 
   const handleFilterChange = <K extends keyof FilterCriteria>(key: K, value: FilterCriteria[K]) => {
@@ -39,9 +40,8 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ listings, myListingId 
 
   const filteredListings = useMemo(() => {
     return listings
-      .filter(l => l.id !== myListingId)
       .filter(l => dormMatchesFilter(l, filters));
-  }, [listings, filters, myListingId]);
+  }, [listings, filters]);
 
   return (
     <div className="space-y-8">
@@ -50,7 +50,13 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ listings, myListingId 
       {filteredListings.length > 0 ? (
         <div className="grid grid-cols-1 gap-8">
           {filteredListings.map(listing => (
-            <ListingCard key={listing.id} listing={listing} emphasizeDescription={true} />
+            <ListingCard 
+              key={listing.id} 
+              listing={listing} 
+              emphasizeDescription={true}
+              isOwnListing={listing.id === myListingId}
+              onDeleteListing={onDeleteListing}
+            />
           ))}
         </div>
       ) : (
