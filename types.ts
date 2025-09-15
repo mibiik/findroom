@@ -44,3 +44,20 @@ export interface Listing {
 }
 
 export type FilterCriteria = DesiredDormInfo;
+
+// Roommate search specific types
+export interface RoommateSearch {
+  id: string;
+  contactInfo: string;
+  campus: Campus;
+  building: string;
+  roomNumber: string;
+  createdAt: string;
+}
+
+export interface RoommateSearchForm {
+  campus: Campus | '';
+  building: string;
+  roomNumber: string;
+  contactInfo: string;
+}

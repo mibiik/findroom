@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { type Listing } from './types';
+import { type Listing, type RoommateSearch } from './types';
 import { MyListingPage } from './components/MyListingPage';
 import { ExplorePage } from './components/ExplorePage';
-import { SwapIcon, PlusCircleIcon, SearchIcon } from './components/icons';
+import { RoommatePage } from './components/RoommatePage';
+import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon } from './components/icons';
 import { getListings, saveListing } from './firebase/firestoreService';
 
-type View = 'my-listing' | 'explore';
+type View = 'my-listing' | 'explore' | 'roommate';
 
 const NavButton = ({ isActive, onClick, icon, label }: { isActive: boolean, onClick: () => void, icon: React.ReactNode, label: string }) => (
     <button
@@ -26,6 +27,8 @@ const NavButton = ({ isActive, onClick, icon, label }: { isActive: boolean, onCl
 export default function App() {
     const [listings, setListings] = useState<Listing[]>([]);
     const [myListingId, setMyListingId] = useState<string | null>(null);
+    const [roommateSearches, setRoommateSearches] = useState<RoommateSearch[]>([]);
+    const [myRoommateSearchId, setMyRoommateSearchId] = useState<string | null>(null);
     const [currentView, setCurrentView] = useState<View>('my-listing');
     const [isInitialized, setIsInitialized] = useState(false);
     
@@ -36,6 +39,17 @@ export default function App() {
             const savedMyId = localStorage.getItem('dorm-swap-my-id');
             if (savedMyId) {
                 setMyListingId(savedMyId);
+            }
+            const savedRoommateId = localStorage.getItem('dorm-swap-roommate-id');
+            if (savedRoommateId) {
+                setMyRoommateSearchId(savedRoommateId);
+            }
+            // Load roommate searches from localStorage
+            try {
+                const savedSearches = JSON.parse(localStorage.getItem('roommate-searches') || '[]');
+                setRoommateSearches(savedSearches);
+            } catch (error) {
+                console.error("Failed to load roommate searches:", error);
             }
             setIsInitialized(true);
         };
@@ -49,8 +63,13 @@ export default function App() {
             } else {
                 localStorage.removeItem('dorm-swap-my-id');
             }
+            if (myRoommateSearchId) {
+                localStorage.setItem('dorm-swap-roommate-id', myRoommateSearchId);
+            } else {
+                localStorage.removeItem('dorm-swap-roommate-id');
+            }
         }
-    }, [myListingId, isInitialized]);
+    }, [myListingId, myRoommateSearchId, isInitialized]);
 
     const addOrUpdateListing = useCallback(async (newListing: Listing) => {
         // Optimistic UI update for a responsive feel
@@ -76,6 +95,31 @@ export default function App() {
             setListings(listingsFromDb);
         }
     }, []);
+
+    const addOrUpdateRoommateSearch = useCallback(async (newSearch: RoommateSearch) => {
+        // Optimistic UI update for a responsive feel
+        setRoommateSearches(prev => {
+            const existingIndex = prev.findIndex(s => s.id === newSearch.id);
+            if (existingIndex > -1) {
+                const updatedSearches = [...prev];
+                updatedSearches[existingIndex] = newSearch;
+                return updatedSearches;
+            }
+            return [newSearch, ...prev].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        });
+        setMyRoommateSearchId(newSearch.id);
+
+        // For now, just store in localStorage (you can add Firestore later)
+        try {
+            const existingSearches = JSON.parse(localStorage.getItem('roommate-searches') || '[]');
+            const updatedSearches = existingSearches.filter((s: RoommateSearch) => s.id !== newSearch.id);
+            updatedSearches.unshift(newSearch);
+            localStorage.setItem('roommate-searches', JSON.stringify(updatedSearches));
+        } catch (error) {
+            console.error("Failed to save roommate search:", error);
+            alert("Arama kaydedilemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.");
+        }
+    }, []);
     
     const myListing = listings.find(l => l.id === myListingId) || null;
 
@@ -85,6 +129,8 @@ export default function App() {
                 return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} />;
             case 'explore':
                 return <ExplorePage listings={listings} myListingId={myListingId} />;
+            case 'roommate':
+                return <RoommatePage roommateSearches={roommateSearches} onAddRoommateSearch={addOrUpdateRoommateSearch} myRoommateSearchId={myRoommateSearchId} />;
             default:
                 return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} />;
         }
@@ -107,6 +153,12 @@ export default function App() {
                                onClick={() => setCurrentView('explore')}
                                icon={<SearchIcon className="w-5 h-5 sm:w-6 sm:h-6" />}
                                label="Keşfet"
+                           />
+                           <NavButton
+                               isActive={currentView === 'roommate'}
+                               onClick={() => setCurrentView('roommate')}
+                               icon={<UserGroupIcon className="w-5 h-5 sm:w-6 sm:h-6" />}
+                               label="Oda Arkadaşı Bul"
                            />
                         </div>
                     </div>

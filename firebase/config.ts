@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAnalytics } from 'firebase/analytics';
+import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,8 +16,16 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Analytics
-getAnalytics(app);
+// Initialize Firebase Analytics (guarded for Safari/SSR)
+(async () => {
+  try {
+    if (typeof window !== 'undefined' && (await isAnalyticsSupported())) {
+      getAnalytics(app);
+    }
+  } catch {
+    // no-op: analytics is optional
+  }
+})();
 
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
