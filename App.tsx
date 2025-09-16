@@ -218,7 +218,7 @@ export default function App() {
             case 'my-listing':
                 return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} />;
             case 'explore':
-                return <ExplorePage listings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} />;
+                return <ExplorePage listings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} onCreateRequest={() => setCurrentView('my-listing')} />;
             case 'roommate':
                 return <RoommatePage roommateSearches={roommateSearches} onAddRoommateSearch={addOrUpdateRoommateSearch} myRoommateSearchId={myRoommateSearchId} />;
             default:
