@@ -56,7 +56,9 @@ export default function App() {
     
     useEffect(() => {
         const initializeApp = async () => {
+            console.log('🚀 App initializing...');
             const listingsFromDb = await getListings();
+            console.log('📊 Listings from Firebase:', listingsFromDb.length);
             // Merge my local listing (if any) so it appears immediately after refresh
             let mergedListings = listingsFromDb;
             try {
@@ -69,7 +71,10 @@ export default function App() {
                 }
             } catch {}
             setListings(mergedListings);
+            console.log('📊 Final listings count:', mergedListings.length);
+            
             const roommateFromDb = await getRoommateSearches();
+            console.log('👥 Roommate searches from Firebase:', roommateFromDb.length);
             // Load my roommate search from localStorage and merge for immediate UX
             let localMySearch: RoommateSearch | null = null;
             try {
@@ -80,6 +85,8 @@ export default function App() {
                 ? [localMySearch, ...roommateFromDb]
                 : roommateFromDb;
             setRoommateSearches(merged);
+            console.log('👥 Final roommate searches count:', merged.length);
+            
             const savedMyId = localStorage.getItem('dorm-swap-my-id');
             if (savedMyId) {
                 setMyListingId(savedMyId);
@@ -89,13 +96,6 @@ export default function App() {
                 setMyRoommateSearchId(savedRoommateId);
             } else if (localMySearch) {
                 setMyRoommateSearchId(localMySearch.id);
-            }
-            // Load roommate searches from localStorage
-            try {
-                const savedSearches = JSON.parse(localStorage.getItem('roommate-searches') || '[]');
-                setRoommateSearches(savedSearches);
-            } catch (error) {
-                console.error("Failed to load roommate searches:", error);
             }
             // Always start on Keşfet
             setCurrentView('explore');
@@ -384,7 +384,7 @@ export default function App() {
             }`}>
                 <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
                     {/* Desktop Layout */}
-                    <div className="hidden sm:flex items-center justify-between w-full">
+                    <div className="hidden sm:flex items-center justify-center w-full">
                         <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
                            <NavButton
                                isActive={currentView === 'my-listing'}
@@ -412,8 +412,8 @@ export default function App() {
                            />
                         </div>
                         
-                        {/* Sağ taraf - Sadece Bildirim */}
-                        <div className="flex items-center">
+                        {/* Bildirim Merkezi */}
+                        <div className="ml-4">
                             <NotificationCenter
                                 notifications={notifications}
                                 onMarkAsRead={markNotificationAsRead}
