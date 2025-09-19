@@ -114,7 +114,14 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
       currentDorm,
       currentDormDetails,
       desiredDorm,
-      optionalRoomDetails: optionalRoomDetails.roomNumber || optionalRoomDetails.building || optionalRoomDetails.hasBathroom ? optionalRoomDetails : undefined,
+      // optionalRoomDetails sadece anlamlı veri varsa ekle
+      ...(optionalRoomDetails.roomNumber || optionalRoomDetails.building || optionalRoomDetails.hasBathroom ? {
+        optionalRoomDetails: {
+          roomNumber: optionalRoomDetails.roomNumber || '',
+          building: optionalRoomDetails.building || '',
+          hasBathroom: optionalRoomDetails.hasBathroom || false
+        }
+      } : {}),
       createdAt: myListing?.createdAt || new Date().toISOString(),
     };
     

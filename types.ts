@@ -43,8 +43,16 @@ export interface SpecificDormInfo {
 export interface DesiredDormInfo {
   gender: Gender | 'any';
   campus: Campus | 'any';
-  capacity: Capacity | 'any';
+  capacity: Capacity | 'any' | 'multiple';
+  preferredCapacities?: Capacity[];
   bunkBed: boolean | 'any';
+}
+
+// Optional room details for more specific information
+export interface OptionalRoomDetails {
+  roomNumber: string;
+  building: string;
+  hasBathroom: boolean;
 }
 
 // The main data structure for a swap listing
@@ -54,6 +62,7 @@ export interface Listing {
   currentDorm: SpecificDormInfo;
   currentDormDetails: string;
   desiredDorm: DesiredDormInfo;
+  optionalRoomDetails?: OptionalRoomDetails;
   createdAt: string; // ISO string for localStorage compatibility
 }
 

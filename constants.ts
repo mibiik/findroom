@@ -1,4 +1,3 @@
-
 import { Gender, Campus, Capacity } from './types';
 
 export const GENDER_OPTIONS = [

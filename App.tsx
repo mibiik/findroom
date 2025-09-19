@@ -6,7 +6,7 @@ import { RoommatePage } from './components/RoommatePage';
 import { NotificationCenter } from './components/NotificationCenter';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon, ChartBarIcon } from './components/icons';
-import { getListings, saveListing, deleteListing, getRoommateSearches, saveRoommateSearch, createOrUpdateUser, getUser, updateUserLastActive } from './firebase/firestoreService';
+import { getListings, saveListing, deleteListing, getRoommateSearches, saveRoommateSearch, createOrUpdateUser, getUser, updateUserLastActive, testFirebaseConnection } from './firebase/firestoreService';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 
 type View = 'my-listing' | 'explore' | 'roommate' | 'analytics';
@@ -99,6 +99,13 @@ export default function App() {
     useEffect(() => {
         const initializeApp = async () => {
             console.log('🚀 App initializing...');
+            
+            // Firebase bağlantısını test et
+            const isFirebaseConnected = await testFirebaseConnection();
+            if (!isFirebaseConnected) {
+                console.error('❌ Firebase bağlantısı başarısız!');
+                alert('Veritabanı bağlantısında sorun var. Lütfen internet bağlantınızı kontrol edin.');
+            }
             
             // Kullanıcıyı başlat
             const userId = getOrCreateUserId();

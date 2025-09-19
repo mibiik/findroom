@@ -17,6 +17,11 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
         return true;
     } catch (error) {
         console.error('Firebase connection failed:', error);
+        console.error('Connection error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            code: (error as any)?.code,
+            details: (error as any)?.details
+        });
         return false;
     }
 };
@@ -38,10 +43,44 @@ export const getListings = async (): Promise<Listing[]> => {
 
 export const saveListing = async (listing: Listing): Promise<void> => {
     try {
+        console.log('Saving listing to Firestore:', listing);
+        
+        // Firestore için veriyi temizle - undefined değerleri kaldır
+        const cleanedListing = {
+            id: listing.id,
+            contactInfo: listing.contactInfo,
+            currentDorm: listing.currentDorm,
+            currentDormDetails: listing.currentDormDetails,
+            desiredDorm: listing.desiredDorm,
+            createdAt: listing.createdAt,
+            // optionalRoomDetails sadece varsa ekle
+            ...(listing.optionalRoomDetails && {
+                optionalRoomDetails: {
+                    roomNumber: listing.optionalRoomDetails.roomNumber || '',
+                    building: listing.optionalRoomDetails.building || '',
+                    hasBathroom: listing.optionalRoomDetails.hasBathroom || false
+                }
+            })
+        };
+        
+        // Boş string'leri ve undefined değerleri temizle
+        const finalListing = Object.fromEntries(
+            Object.entries(cleanedListing).filter(([_, value]) => value !== undefined && value !== '')
+        );
+        
+        console.log('Cleaned listing for Firestore:', finalListing);
+        
         const listingDocRef = doc(db, 'listings', listing.id);
-        await setDoc(listingDocRef, listing);
+        await setDoc(listingDocRef, finalListing);
+        console.log('Listing saved successfully to Firestore');
     } catch (error) {
         console.error("Error saving listing: ", error);
+        console.error("Error details:", {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            code: (error as any)?.code,
+            details: (error as any)?.details,
+            listing: listing
+        });
         throw error; // Re-throw the error to be handled by the caller
     }
 };
@@ -60,10 +99,37 @@ export const getRoommateSearches = async (): Promise<RoommateSearch[]> => {
 
 export const saveRoommateSearch = async (search: RoommateSearch): Promise<void> => {
     try {
+        console.log('Saving roommate search to Firestore:', search);
+        
+        // Firestore için veriyi temizle
+        const cleanedSearch = {
+            id: search.id,
+            name: search.name,
+            contactInfo: search.contactInfo,
+            campus: search.campus,
+            building: search.building,
+            roomNumber: search.roomNumber,
+            createdAt: search.createdAt
+        };
+        
+        // Boş string'leri ve undefined değerleri temizle
+        const finalSearch = Object.fromEntries(
+            Object.entries(cleanedSearch).filter(([_, value]) => value !== undefined && value !== '')
+        );
+        
+        console.log('Cleaned roommate search for Firestore:', finalSearch);
+        
         const docRef = doc(db, 'roommate_searches', search.id);
-        await setDoc(docRef, search);
+        await setDoc(docRef, finalSearch);
+        console.log('Roommate search saved successfully to Firestore');
     } catch (error) {
         console.error('Error saving roommate search:', error);
+        console.error('Roommate search error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            code: (error as any)?.code,
+            details: (error as any)?.details,
+            search: search
+        });
         throw error;
     }
 };
@@ -323,14 +389,41 @@ export const getRoommateMatches = async (): Promise<any> => {
 // Kullanıcı işlemleri
 export const createOrUpdateUser = async (user: User): Promise<void> => {
     try {
+        console.log('Saving user to Firestore:', user);
+        
+        // Firestore için veriyi temizle
+        const cleanedUser = {
+            id: user.id,
+            name: user.name,
+            createdAt: user.createdAt,
+            lastActive: new Date().toISOString(),
+            preferences: {
+                notifications: user.preferences?.notifications || true,
+                theme: user.preferences?.theme || 'light'
+            }
+        };
+        
+        // Email ve phone varsa ekle
+        if (user.email) {
+            cleanedUser.email = user.email;
+        }
+        if (user.phone) {
+            cleanedUser.phone = user.phone;
+        }
+        
+        console.log('Cleaned user for Firestore:', cleanedUser);
+        
         const userDocRef = doc(db, 'users', user.id);
-        await setDoc(userDocRef, {
-            ...user,
-            lastActive: new Date().toISOString()
-        }, { merge: true });
+        await setDoc(userDocRef, cleanedUser, { merge: true });
         console.log('User saved to Firebase:', user.id);
     } catch (error) {
         console.error("Error saving user: ", error);
+        console.error("User error details:", {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            code: (error as any)?.code,
+            details: (error as any)?.details,
+            user: user
+        });
         throw error;
     }
 };
