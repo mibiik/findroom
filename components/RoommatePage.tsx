@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Campus, type RoommateSearch, type RoommateSearchForm } from '../types';
 import { UserGroupIcon, PlusCircleIcon } from './icons';
-import { ROOM_NUMBER_OPTIONS } from '../constants';
 
 interface RoommatePageProps {
   roommateSearches: RoommateSearch[];
@@ -96,10 +95,6 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
     return formData.campus === Campus.West ? WEST_BUILDINGS : MAIN_BUILDINGS;
   };
 
-  const getRoomNumberOptions = () => {
-    if (!formData.building) return [];
-    return ROOM_NUMBER_OPTIONS[formData.building as keyof typeof ROOM_NUMBER_OPTIONS] || [];
-  };
 
   // Normalize before submit to avoid casing/whitespace mismatches
   const normalize = (v: string) => v.trim().toUpperCase();
@@ -148,18 +143,15 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Oda Numarası</label>
-                <select
+                <input
+                  type="text"
                   value={formData.roomNumber}
                   onChange={(e) => handleInputChange('roomNumber', e.target.value)}
-                  className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Örn: 205, 101"
                   disabled={!formData.building}
                   required
-                >
-                  <option value="">Oda numarası seçin</option>
-                  {getRoomNumberOptions().map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
+                />
               </div>
 
               <div>

@@ -61,3 +61,59 @@ export interface RoommateSearchForm {
   roomNumber: string;
   contactInfo: string;
 }
+
+// Bildirim sistemi için types
+export type NotificationType = 'match' | 'message' | 'new_listing' | 'system';
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  read: boolean;
+  timestamp: string;
+  listingId?: string; // İlgili ilan ID'si
+  actionUrl?: string; // Tıklanabilir URL
+}
+
+// İstatistik ve analitik için types
+export interface Analytics {
+  totalListings: number;
+  totalUsers: number;
+  successfulSwaps: number;
+  averageMatchTime: number; // dakika cinsinden
+  popularDorms: { dorm: string; count: number }[];
+  dailyActivity: { date: string; listings: number; matches: number }[];
+  userActivity: {
+    userId: string;
+    listingsCreated: number;
+    matchesFound: number;
+    lastActive: string;
+  }[];
+}
+
+export interface UserStats {
+  listingsCreated: number;
+  matchesFound: number;
+  successfulSwaps: number;
+  averageResponseTime: number;
+  lastActive: string;
+}
+
+// Oda ve oda arkadaşı istatistikleri için
+export interface RoomStats {
+  totalRooms: number;
+  roomsByGender: { gender: Gender; count: number }[];
+  roomsByCampus: { campus: Campus; count: number }[];
+  roomsByCapacity: { capacity: Capacity; count: number }[];
+  roomsWithBunkBed: number;
+  roomsWithoutBunkBed: number;
+}
+
+export interface RoommateStats {
+  totalRoommateSearches: number;
+  searchesByCampus: { campus: Campus; count: number }[];
+  searchesByBuilding: { building: string; count: number }[];
+  recentSearches: RoommateSearch[];
+}

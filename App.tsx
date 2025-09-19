@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { type Listing, type RoommateSearch } from './types';
+import { type Listing, type RoommateSearch, type Notification, type Analytics, type UserStats } from './types';
 import { MyListingPage } from './components/MyListingPage';
 import { ExplorePage } from './components/ExplorePage';
 import { RoommatePage } from './components/RoommatePage';
-import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon } from './components/icons';
+import { NotificationCenter } from './components/NotificationCenter';
+import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon, ChartBarIcon } from './components/icons';
 import { getListings, saveListing, deleteListing, getRoommateSearches, saveRoommateSearch } from './firebase/firestoreService';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 
-type View = 'my-listing' | 'explore' | 'roommate';
+type View = 'my-listing' | 'explore' | 'roommate' | 'analytics';
 
 const NavButton = ({ isActive, onClick, icon, label }: { isActive: boolean, onClick: () => void, icon: React.ReactNode, label: string }) => (
     <button
@@ -34,6 +36,23 @@ export default function App() {
     const [isInitialized, setIsInitialized] = useState(false);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [analytics, setAnalytics] = useState<Analytics>({
+        totalListings: 0,
+        totalUsers: 0,
+        successfulSwaps: 0,
+        averageMatchTime: 0,
+        popularDorms: [],
+        dailyActivity: [],
+        userActivity: []
+    });
+    const [userStats, setUserStats] = useState<UserStats>({
+        listingsCreated: 0,
+        matchesFound: 0,
+        successfulSwaps: 0,
+        averageResponseTime: 0,
+        lastActive: new Date().toISOString()
+    });
     
     useEffect(() => {
         const initializeApp = async () => {
@@ -235,6 +254,111 @@ export default function App() {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
+
+    // Bildirim fonksiyonları
+    const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp'>) => {
+        const newNotification: Notification = {
+            ...notification,
+            id: `notification-${Date.now()}`,
+            timestamp: new Date().toISOString()
+        };
+        setNotifications(prev => [newNotification, ...prev]);
+        
+        // localStorage'a kaydet
+        try {
+            const saved = JSON.parse(localStorage.getItem('notifications') || '[]');
+            localStorage.setItem('notifications', JSON.stringify([newNotification, ...saved]));
+        } catch {}
+    }, []);
+
+    const markNotificationAsRead = useCallback((notificationId: string) => {
+        setNotifications(prev => 
+            prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+        );
+    }, []);
+
+    const markAllNotificationsAsRead = useCallback(() => {
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    }, []);
+
+    const deleteNotification = useCallback((notificationId: string) => {
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    }, []);
+
+    // Analitik verilerini güncelle
+    const updateAnalytics = useCallback(() => {
+        const totalListings = listings.length;
+        const totalUsers = new Set(listings.map(l => l.contactInfo)).size;
+        
+        // Popüler yurtlar hesapla
+        const dormCounts: { [key: string]: number } = {};
+        listings.forEach(listing => {
+            const dormKey = `${listing.currentDorm.campus} - ${listing.currentDorm.capacity}`;
+            dormCounts[dormKey] = (dormCounts[dormKey] || 0) + 1;
+        });
+        
+        const popularDorms = Object.entries(dormCounts)
+            .map(([dorm, count]) => ({ dorm, count }))
+            .sort((a, b) => b.count - a.count);
+
+        // Günlük aktivite hesapla (son 7 gün)
+        const dailyActivity = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            
+            const dayListings = listings.filter(l => 
+                l.createdAt.startsWith(dateStr)
+            ).length;
+            
+            dailyActivity.push({
+                date: dateStr,
+                listings: dayListings,
+                matches: Math.floor(dayListings * 0.3) // Tahmini eşleşme
+            });
+        }
+
+        setAnalytics({
+            totalListings,
+            totalUsers,
+            successfulSwaps: Math.floor(totalListings * 0.2), // Tahmini başarı
+            averageMatchTime: 24 * 60, // 24 saat
+            popularDorms,
+            dailyActivity,
+            userActivity: []
+        });
+    }, [listings]);
+
+    // Kullanıcı istatistiklerini güncelle
+    const updateUserStats = useCallback(() => {
+        if (!myListingId) return;
+        
+        const myListings = listings.filter(l => l.id === myListingId);
+        const matches = myListings.length; // Basit hesaplama
+        
+        setUserStats({
+            listingsCreated: myListings.length,
+            matchesFound: matches,
+            successfulSwaps: Math.floor(matches * 0.1),
+            averageResponseTime: 2 * 60, // 2 saat
+            lastActive: new Date().toISOString()
+        });
+    }, [listings, myListingId]);
+
+    // Analitik verilerini güncelle
+    useEffect(() => {
+        updateAnalytics();
+        updateUserStats();
+    }, [updateAnalytics, updateUserStats]);
+
+    // Bildirimleri localStorage'dan yükle
+    useEffect(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem('notifications') || '[]');
+            setNotifications(saved);
+        } catch {}
+    }, []);
     
     const myListing = listings.find(l => l.id === myListingId) || null;
 
@@ -246,6 +370,8 @@ export default function App() {
                 return <ExplorePage listings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} onCreateRequest={() => setCurrentView('my-listing')} />;
             case 'roommate':
                 return <RoommatePage roommateSearches={roommateSearches} onAddRoommateSearch={addOrUpdateRoommateSearch} myRoommateSearchId={myRoommateSearchId} />;
+            case 'analytics':
+                return <AnalyticsDashboard analytics={analytics} userStats={userStats} />;
             default:
                 return <MyListingPage onAddListing={addOrUpdateListing} myListing={myListing} allListings={listings} myListingId={myListingId} onDeleteListing={deleteListingHandler} />;
         }
@@ -257,31 +383,93 @@ export default function App() {
                 isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
             }`}>
                 <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-                    <div className="flex items-center justify-center w-full">
-                        <div className="flex flex-wrap items-center gap-1 bg-gray-100 p-1 rounded-lg w-full sm:w-auto justify-center">
+                    {/* Desktop Layout */}
+                    <div className="hidden sm:flex items-center justify-between w-full">
+                        <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
                            <NavButton
                                isActive={currentView === 'my-listing'}
                                onClick={() => setCurrentView('my-listing')}
-                               icon={<SwapIcon className="w-5 h-5 sm:w-6 sm:h-6" />}
+                               icon={<SwapIcon className="w-5 h-5" />}
                                label="Eşleşmelerim"
                            />
                            <NavButton
                                isActive={currentView === 'explore'}
                                onClick={() => setCurrentView('explore')}
-                               icon={<SearchIcon className="w-5 h-5 sm:w-6 sm:h-6" />}
+                               icon={<SearchIcon className="w-5 h-5" />}
                                label="Keşfet"
                            />
                            <NavButton
                                isActive={currentView === 'roommate'}
                                onClick={() => setCurrentView('roommate')}
-                               icon={<UserGroupIcon className="w-5 h-5 sm:w-6 sm:h-6" />}
+                               icon={<UserGroupIcon className="w-5 h-5" />}
                                label="Oda Arkadaşını Bul"
                            />
+                           <NavButton
+                               isActive={currentView === 'analytics'}
+                               onClick={() => setCurrentView('analytics')}
+                               icon={<ChartBarIcon className="w-5 h-5" />}
+                               label="İstatistikler"
+                           />
+                        </div>
+                        
+                        {/* Sağ taraf - Sadece Bildirim */}
+                        <div className="flex items-center">
+                            <NotificationCenter
+                                notifications={notifications}
+                                onMarkAsRead={markNotificationAsRead}
+                                onMarkAllAsRead={markAllNotificationsAsRead}
+                                onDeleteNotification={deleteNotification}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Mobile Layout */}
+                    <div className="sm:hidden space-y-3">
+                        {/* Üst sıra - Ana kategoriler */}
+                        <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+                           <NavButton
+                               isActive={currentView === 'my-listing'}
+                               onClick={() => setCurrentView('my-listing')}
+                               icon={<SwapIcon className="w-4 h-4" />}
+                               label="Eşleşmelerim"
+                           />
+                           <NavButton
+                               isActive={currentView === 'explore'}
+                               onClick={() => setCurrentView('explore')}
+                               icon={<SearchIcon className="w-4 h-4" />}
+                               label="Keşfet"
+                           />
+                        </div>
+                        
+                        {/* Alt sıra - Yeni kategoriler */}
+                        <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+                           <NavButton
+                               isActive={currentView === 'roommate'}
+                               onClick={() => setCurrentView('roommate')}
+                               icon={<UserGroupIcon className="w-4 h-4" />}
+                               label="Oda Arkadaşı"
+                           />
+                           <NavButton
+                               isActive={currentView === 'analytics'}
+                               onClick={() => setCurrentView('analytics')}
+                               icon={<ChartBarIcon className="w-4 h-4" />}
+                               label="İstatistikler"
+                           />
+                        </div>
+                        
+                        {/* Mobil bildirim */}
+                        <div className="flex items-center justify-end">
+                            <NotificationCenter
+                                notifications={notifications}
+                                onMarkAsRead={markNotificationAsRead}
+                                onMarkAllAsRead={markAllNotificationsAsRead}
+                                onDeleteNotification={deleteNotification}
+                            />
                         </div>
                     </div>
                 </nav>
             </header>
-            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-28">
+            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-40">
                 <div className="max-w-4xl mx-auto">
                    {isInitialized ? renderView() : <div className="text-center p-10">Yükleniyor...</div>}
                 </div>
@@ -303,7 +491,7 @@ export default function App() {
                 </a>
             </div>
             
-            <Analytics />
+            <VercelAnalytics />
         </div>
     );
 }
