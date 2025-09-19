@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { type Listing, type RoommateSearch, type Notification, type Analytics, type UserStats } from './types';
+import { type Listing, type RoommateSearch, type Notification, type Analytics, type UserStats, type User } from './types';
 import { MyListingPage } from './components/MyListingPage';
 import { ExplorePage } from './components/ExplorePage';
 import { RoommatePage } from './components/RoommatePage';
 import { NotificationCenter } from './components/NotificationCenter';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { SwapIcon, PlusCircleIcon, SearchIcon, UserGroupIcon, ChartBarIcon } from './components/icons';
-import { getListings, saveListing, deleteListing, getRoommateSearches, saveRoommateSearch } from './firebase/firestoreService';
+import { getListings, saveListing, deleteListing, getRoommateSearches, saveRoommateSearch, createOrUpdateUser, getUser, updateUserLastActive } from './firebase/firestoreService';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 
 type View = 'my-listing' | 'explore' | 'roommate' | 'analytics';
@@ -53,10 +53,57 @@ export default function App() {
         averageResponseTime: 0,
         lastActive: new Date().toISOString()
     });
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    
+    // Kullanıcı ID'si oluştur veya al
+    const getOrCreateUserId = (): string => {
+        let userId = localStorage.getItem('dorm-swap-user-id');
+        if (!userId) {
+            userId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            localStorage.setItem('dorm-swap-user-id', userId);
+        }
+        return userId;
+    };
+
+    // Kullanıcı bilgilerini yükle veya oluştur
+    const initializeUser = async (userId: string) => {
+        try {
+            let user = await getUser(userId);
+            
+            if (!user) {
+                // Yeni kullanıcı oluştur
+                user = {
+                    id: userId,
+                    name: `Kullanıcı ${userId.slice(-6)}`,
+                    createdAt: new Date().toISOString(),
+                    lastActive: new Date().toISOString(),
+                    preferences: {
+                        notifications: true,
+                        theme: 'light'
+                    }
+                };
+                await createOrUpdateUser(user);
+                console.log('👤 New user created:', user.name);
+            } else {
+                // Mevcut kullanıcının son aktivite zamanını güncelle
+                await updateUserLastActive(userId);
+                console.log('👤 User loaded:', user.name);
+            }
+            
+            setCurrentUser(user);
+        } catch (error) {
+            console.error('Error initializing user:', error);
+        }
+    };
     
     useEffect(() => {
         const initializeApp = async () => {
             console.log('🚀 App initializing...');
+            
+            // Kullanıcıyı başlat
+            const userId = getOrCreateUserId();
+            await initializeUser(userId);
+            
             const listingsFromDb = await getListings();
             console.log('📊 Listings from Firebase:', listingsFromDb.length);
             // Merge my local listing (if any) so it appears immediately after refresh

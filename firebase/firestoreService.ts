@@ -1,10 +1,11 @@
-import { collection, doc, getDocs, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, deleteDoc, query, orderBy, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from './config';
-import type { Listing, RoommateSearch, RoomStats, RoommateStats } from '../types';
+import type { Listing, RoommateSearch, RoomStats, RoommateStats, User } from '../types';
 import { Gender, Campus, Capacity } from '../types';
 
 const listingsCollectionRef = collection(db, 'listings');
 const roommateCollectionRef = collection(db, 'roommate_searches');
+const usersCollectionRef = collection(db, 'users');
 
 // Firebase bağlantısını test et
 export const testFirebaseConnection = async (): Promise<boolean> => {
@@ -316,5 +317,46 @@ export const getRoommateMatches = async (): Promise<any> => {
             totalPeopleMatched: 0,
             matchedRooms: []
         };
+    }
+};
+
+// Kullanıcı işlemleri
+export const createOrUpdateUser = async (user: User): Promise<void> => {
+    try {
+        const userDocRef = doc(db, 'users', user.id);
+        await setDoc(userDocRef, {
+            ...user,
+            lastActive: new Date().toISOString()
+        }, { merge: true });
+        console.log('User saved to Firebase:', user.id);
+    } catch (error) {
+        console.error("Error saving user: ", error);
+        throw error;
+    }
+};
+
+export const getUser = async (userId: string): Promise<User | null> => {
+    try {
+        const userDocRef = doc(db, 'users', userId);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+            return userDoc.data() as User;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error fetching user: ", error);
+        return null;
+    }
+};
+
+export const updateUserLastActive = async (userId: string): Promise<void> => {
+    try {
+        const userDocRef = doc(db, 'users', userId);
+        await updateDoc(userDocRef, {
+            lastActive: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error("Error updating user last active: ", error);
     }
 };

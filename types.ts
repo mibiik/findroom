@@ -17,6 +17,20 @@ export enum Capacity {
   Five = '5 Kişilik',
 }
 
+// Kullanıcı bilgileri
+export interface User {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  createdAt: string;
+  lastActive: string;
+  preferences: {
+    notifications: boolean;
+    theme: 'light' | 'dark';
+  };
+}
+
 // Represents a specific, existing dorm room
 export interface SpecificDormInfo {
   gender: Gender;
