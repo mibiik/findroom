@@ -58,6 +58,30 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, emphasizeDesc
         </div>
       )}
       <div className="p-4 sm:p-6">
+        {/* Oda Detayları - Üstte */}
+        {listing.optionalRoomDetails && (listing.optionalRoomDetails.roomNumber || listing.optionalRoomDetails.building || listing.optionalRoomDetails.hasBathroom) && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <h4 className="font-semibold text-green-800 text-sm mb-2">Oda Detayları</h4>
+            <div className="flex flex-wrap gap-3 text-xs">
+              {listing.optionalRoomDetails.building && (
+                <span className="bg-white px-2 py-1 rounded border border-green-300 text-green-700">
+                  Bina: {listing.optionalRoomDetails.building}
+                </span>
+              )}
+              {listing.optionalRoomDetails.roomNumber && (
+                <span className="bg-white px-2 py-1 rounded border border-green-300 text-green-700">
+                  Oda: {listing.optionalRoomDetails.roomNumber}
+                </span>
+              )}
+              {listing.optionalRoomDetails.hasBathroom && (
+                <span className="bg-white px-2 py-1 rounded border border-green-300 text-green-700 font-medium">
+                  ✓ Banyolu
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         {!!listing.currentDormDetails && (
           <div className="mb-3 sm:mb-4">
             <p className={`${emphasizeDescription ? 'text-black font-bold text-base sm:text-lg' : 'text-gray-700 text-sm sm:text-base'} break-words`}>

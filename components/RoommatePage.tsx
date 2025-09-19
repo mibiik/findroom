@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Campus, type RoommateSearch, type RoommateSearchForm } from '../types';
 import { UserGroupIcon, PlusCircleIcon } from './icons';
+import { ROOM_NUMBER_OPTIONS } from '../constants';
 
 interface RoommatePageProps {
   roommateSearches: RoommateSearch[];
@@ -95,6 +96,11 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
     return formData.campus === Campus.West ? WEST_BUILDINGS : MAIN_BUILDINGS;
   };
 
+  const getRoomNumberOptions = () => {
+    if (!formData.building) return [];
+    return ROOM_NUMBER_OPTIONS[formData.building as keyof typeof ROOM_NUMBER_OPTIONS] || [];
+  };
+
   // Normalize before submit to avoid casing/whitespace mismatches
   const normalize = (v: string) => v.trim().toUpperCase();
 
@@ -109,7 +115,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Kampüs</label>
                 <select
@@ -142,15 +148,18 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Oda Numarası</label>
-                <input
-                  type="text"
+                <select
                   value={formData.roomNumber}
                   onChange={(e) => handleInputChange('roomNumber', e.target.value)}
-                  className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Örn: 101, 205"
+                  className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   disabled={!formData.building}
                   required
-                />
+                >
+                  <option value="">Oda numarası seçin</option>
+                  {getRoomNumberOptions().map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -204,18 +213,20 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
             </button>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Kampüs:</span> {myRoommateSearch.campus}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Bina:</span> {myRoommateSearch.building}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Oda:</span> {myRoommateSearch.roomNumber}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">İletişim:</span> {myRoommateSearch.contactInfo}
-            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Kampüs:</span> {myRoommateSearch.campus}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Bina:</span> {myRoommateSearch.building}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Oda Numarası:</span> {myRoommateSearch.roomNumber}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">İletişim:</span> {myRoommateSearch.contactInfo}
+              </p>
+            </div>
           </div>
         </div>
       )}

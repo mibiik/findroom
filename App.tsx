@@ -32,6 +32,8 @@ export default function App() {
     const [myRoommateSearchId, setMyRoommateSearchId] = useState<string | null>(null);
     const [currentView, setCurrentView] = useState<View>('explore');
     const [isInitialized, setIsInitialized] = useState(false);
+    const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
     
     useEffect(() => {
         const initializeApp = async () => {
@@ -210,6 +212,29 @@ export default function App() {
         const id = setInterval(fetchNow, 5000);
         return () => { isCancelled = true; clearInterval(id); };
     }, [currentView]);
+
+    // Navbar scroll behavior
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY < 10) {
+                // Sayfa en üstteyse navbar'ı göster
+                setIsNavbarVisible(true);
+            } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                // Aşağı scroll yapılıyorsa ve 100px'den fazla scroll edilmişse navbar'ı gizle
+                setIsNavbarVisible(false);
+            } else if (currentScrollY < lastScrollY) {
+                // Yukarı scroll yapılıyorsa navbar'ı göster
+                setIsNavbarVisible(true);
+            }
+            
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
     
     const myListing = listings.find(l => l.id === myListingId) || null;
 
@@ -228,7 +253,9 @@ export default function App() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <header className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-10 border-b border-gray-200">
+            <header className={`fixed top-0 left-0 right-0 z-10 transition-transform duration-300 ease-in-out ${
+                isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
+            }`}>
                 <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
                     <div className="flex items-center justify-center w-full">
                         <div className="flex flex-wrap items-center gap-1 bg-gray-100 p-1 rounded-lg w-full sm:w-auto justify-center">
@@ -254,7 +281,7 @@ export default function App() {
                     </div>
                 </nav>
             </header>
-            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-28">
                 <div className="max-w-4xl mx-auto">
                    {isInitialized ? renderView() : <div className="text-center p-10">Yükleniyor...</div>}
                 </div>

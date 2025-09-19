@@ -23,7 +23,10 @@ const dormMatchesFilter = (listing: Listing, filters: FilterCriteria): boolean =
     const { currentDorm } = listing;
     if (filters.gender !== 'any' && currentDorm.gender !== filters.gender) return false;
     if (filters.campus !== 'any' && currentDorm.campus !== filters.campus) return false;
-    if (filters.capacity !== 'any' && currentDorm.capacity !== filters.capacity) return false;
+    
+    // Handle capacity filtering with new 'multiple' option
+    if (filters.capacity !== 'any' && filters.capacity !== 'multiple' && currentDorm.capacity !== filters.capacity) return false;
+    
     if (filters.bunkBed !== 'any' && currentDorm.bunkBed !== filters.bunkBed) return false;
     return true;
 };

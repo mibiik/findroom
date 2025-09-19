@@ -41,7 +41,15 @@ export const DormInfoCard: React.FC<DormInfoCardProps> = ({ info, title }) => {
                 <DetailItem
                     icon={<HomeIcon />}
                     label="Oda Kapasitesi"
-                    value={info.capacity === 'any' ? 'Farketmez' : info.capacity}
+                    value={
+                        info.capacity === 'any' 
+                            ? 'Farketmez' 
+                            : info.capacity === 'multiple' 
+                                ? (info as DesiredDormInfo).preferredCapacities && (info as DesiredDormInfo).preferredCapacities!.length > 0
+                                    ? (info as DesiredDormInfo).preferredCapacities!.join(', ')
+                                    : 'Birden fazla seçenek uygun'
+                                : info.capacity
+                    }
                 />
                 <DetailItem
                     icon={<BedIcon />}
