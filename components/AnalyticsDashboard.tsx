@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Analytics, UserStats, RoomStats, RoommateStats } from '../types';
-import { ChartBarIcon, UsersIcon, HomeIcon, ClockIcon, UserIcon } from './icons';
+import { FaChartBar, FaUsers, FaHome, FaUser, FaClock, FaBuilding, FaBed, FaMapMarkerAlt, FaCalendarAlt, FaStar, FaCheckCircle, FaExclamationTriangle, FaClipboardList, FaHandshake } from 'react-icons/fa';
 import { getRoomStats, getRoommateStats, getRoommateMatches, getDormSwapMatches } from '../firebase/firestoreService';
 
 interface AnalyticsDashboardProps {
@@ -84,7 +84,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl shadow-sm border border-indigo-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
           <div className="w-6 h-6 bg-indigo-500 rounded-full mr-3 flex items-center justify-center">
-            <UserIcon className="w-4 h-4 text-white" />
+            <div className="text-white">
+              <FaUser size={16} />
+            </div>
           </div>
           Sizin İstatistikleriniz
         </h3>
@@ -187,10 +189,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <HomeIcon className="w-6 h-6 text-blue-600" />
+              <div className="text-blue-600">
+                <FaClipboardList size={24} />
+              </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Toplam İlan</p>
+              <p className="text-sm font-medium text-gray-600">Toplam Talepler</p>
               <p className="text-2xl font-bold text-gray-900">
                 {formatNumber(analytics.totalListings)}
               </p>
@@ -201,7 +205,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
-              <UserIcon className="w-6 h-6 text-green-600" />
+              <div className="text-green-600">
+                <FaUser size={24} />
+              </div>
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Aktif Kullanıcı</p>
@@ -216,10 +222,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-2 bg-orange-100 rounded-lg">
-              <UsersIcon className="w-6 h-6 text-orange-600" />
+              <div className="text-orange-600">
+                <FaHandshake size={24} />
+              </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Yurt Değişim Eşleşmeleri</p>
+              <p className="text-sm font-medium text-gray-600">Eşleşmeler</p>
               <p className="text-2xl font-bold text-gray-900">
                 {formatNumber(dormSwapMatches?.totalMatches || 0)}
               </p>
@@ -270,7 +278,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                 <div className="flex items-center">
                   <div className="p-2 bg-green-100 rounded-lg">
-                    <HomeIcon className="w-5 h-5 text-green-600" />
+                    <div className="text-green-600">
+                      <FaHome size={20} />
+                    </div>
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-green-600">Eşleşen Oda Sayısı</p>
@@ -282,7 +292,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                 <div className="flex items-center">
                   <div className="p-2 bg-blue-100 rounded-lg">
-                    <UsersIcon className="w-5 h-5 text-blue-600" />
+                    <div className="text-blue-600">
+                      <FaUsers size={20} />
+                    </div>
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-blue-600">Eşleşen Kişi Sayısı</p>
@@ -294,7 +306,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
                 <div className="flex items-center">
                   <div className="p-2 bg-purple-100 rounded-lg">
-                    <ChartBarIcon className="w-5 h-5 text-purple-600" />
+                    <div className="text-purple-600">
+                      <FaChartBar size={20} />
+                    </div>
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-purple-600">Ortalama Oda Başına</p>

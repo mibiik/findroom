@@ -1,5 +1,47 @@
 
 import React from 'react';
+import { 
+  FaHeart, 
+  FaUser, 
+  FaUsers, 
+  FaHome, 
+  FaBuilding, 
+  FaBed, 
+  FaSearch, 
+  FaPlus, 
+  FaBell, 
+  FaTimes, 
+  FaCheck, 
+  FaChartBar, 
+  FaClock,
+  FaEdit,
+  FaTrash,
+  FaFilter,
+  FaSort,
+  FaEye,
+  FaEyeSlash,
+  FaInfoCircle,
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaArrowLeft,
+  FaArrowRight,
+  FaArrowUp,
+  FaArrowDown,
+  FaCog,
+  FaUserCircle,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaStar,
+  FaThumbsUp,
+  FaThumbsDown,
+  FaShare,
+  FaDownload,
+  FaUpload,
+  FaSpinner
+} from 'react-icons/fa';
 
 export const HomeIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,3 +140,61 @@ export const UserIcon = ({ className }: { className?: string }) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
   </svg>
 );
+
+// React Icons wrapper component'leri
+const createIconWrapper = (IconComponent: React.ComponentType<any>) => 
+  ({ className, ...props }: { className?: string; [key: string]: any }) => 
+    <IconComponent className={className} {...props} />;
+
+// React Icons'tan gelen yeni ikonlar
+export const ReactIcons = {
+  // Temel ikonlar
+  Heart: createIconWrapper(FaHeart),
+  User: createIconWrapper(FaUser),
+  Users: createIconWrapper(FaUsers),
+  Home: createIconWrapper(FaHome),
+  Building: createIconWrapper(FaBuilding),
+  Bed: createIconWrapper(FaBed),
+  Search: createIconWrapper(FaSearch),
+  Plus: createIconWrapper(FaPlus),
+  Bell: createIconWrapper(FaBell),
+  Times: createIconWrapper(FaTimes),
+  Check: createIconWrapper(FaCheck),
+  ChartBar: createIconWrapper(FaChartBar),
+  Clock: createIconWrapper(FaClock),
+  
+  // Aksiyon ikonları
+  Edit: createIconWrapper(FaEdit),
+  Trash: createIconWrapper(FaTrash),
+  Filter: createIconWrapper(FaFilter),
+  Sort: createIconWrapper(FaSort),
+  Eye: createIconWrapper(FaEye),
+  EyeSlash: createIconWrapper(FaEyeSlash),
+  
+  // Durum ikonları
+  InfoCircle: createIconWrapper(FaInfoCircle),
+  ExclamationTriangle: createIconWrapper(FaExclamationTriangle),
+  CheckCircle: createIconWrapper(FaCheckCircle),
+  TimesCircle: createIconWrapper(FaTimesCircle),
+  
+  // Yön ikonları
+  ArrowLeft: createIconWrapper(FaArrowLeft),
+  ArrowRight: createIconWrapper(FaArrowRight),
+  ArrowUp: createIconWrapper(FaArrowUp),
+  ArrowDown: createIconWrapper(FaArrowDown),
+  
+  // Diğer ikonlar
+  Cog: createIconWrapper(FaCog),
+  UserCircle: createIconWrapper(FaUserCircle),
+  Envelope: createIconWrapper(FaEnvelope),
+  Phone: createIconWrapper(FaPhone),
+  MapMarkerAlt: createIconWrapper(FaMapMarkerAlt),
+  CalendarAlt: createIconWrapper(FaCalendarAlt),
+  Star: createIconWrapper(FaStar),
+  ThumbsUp: createIconWrapper(FaThumbsUp),
+  ThumbsDown: createIconWrapper(FaThumbsDown),
+  Share: createIconWrapper(FaShare),
+  Download: createIconWrapper(FaDownload),
+  Upload: createIconWrapper(FaUpload),
+  Spinner: createIconWrapper(FaSpinner)
+};

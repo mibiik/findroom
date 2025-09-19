@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Campus, type RoommateSearch, type RoommateSearchForm } from '../types';
 import { UserGroupIcon, PlusCircleIcon } from './icons';
+import { FaEdit, FaTimes, FaCheck, FaSpinner } from 'react-icons/fa';
 
 interface RoommatePageProps {
   roommateSearches: RoommateSearch[];
@@ -63,7 +64,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.campus || !formData.building || !formData.roomNumber || !formData.contactInfo.trim()) {
+    if (!formData.name.trim() || !formData.campus || !formData.building || !formData.roomNumber || !formData.contactInfo.trim()) {
       alert('Lütfen tüm alanları doldurun.');
       return;
     }
@@ -72,6 +73,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
     
     const newSearch: RoommateSearch = {
       id: myRoommateSearch?.id || `roommate-${Date.now()}`,
+      name: formData.name.trim(),
       contactInfo: formData.contactInfo.trim(),
       campus: formData.campus as Campus,
       building: normalize(formData.building),
@@ -82,7 +84,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
     try {
       await onAddRoommateSearch(newSearch);
       setShowForm(false);
-      setFormData({ campus: '', building: '', roomNumber: '', contactInfo: '' });
+      setFormData({ name: '', campus: '', building: '', roomNumber: '', contactInfo: '' });
     } catch (error) {
       console.error("Submission failed:", error);
       alert("Arama kaydedilemedi. Lütfen daha sonra tekrar deneyin.");
@@ -111,6 +113,18 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">İsim Soyisim</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className="w-full h-11 px-4 bg-white border border-gray-300 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Adınızı ve soyadınızı giriniz"
+                  required
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Kampüs</label>
                 <select
@@ -199,13 +213,17 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
             </div>
             <button 
               onClick={() => setShowForm(true)} 
-              className="px-2 py-1 text-xs bg-indigo-600 text-white font-medium rounded hover:bg-indigo-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500"
+              className="px-2 py-1 text-xs bg-indigo-600 text-white font-medium rounded hover:bg-indigo-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 flex items-center gap-1"
             >
+              <FaEdit size={12} />
               Düzenle
             </button>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">İsim:</span> {myRoommateSearch.name || 'Belirtilmemiş'}
+              </p>
               <p className="text-sm text-gray-600">
                 <span className="font-medium">Kampüs:</span> {myRoommateSearch.campus}
               </p>
@@ -238,6 +256,9 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-gray-900">
+                        {match.name || 'İsim Belirtilmemiş'}
+                      </p>
+                      <p className="text-sm text-gray-600">
                         {match.campus} - {match.building} - Oda {match.roomNumber}
                       </p>
                       <p className="text-sm text-gray-600 mt-1">
@@ -280,7 +301,7 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="mt-5 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="mt-5 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mx-auto"
           >
             Arama Oluştur
           </button>

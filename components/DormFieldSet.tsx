@@ -60,7 +60,7 @@ export const DormFieldSet = <T extends DormInfo>({ title, isDesired, values, onC
       {isDesired && (
         <div className="mb-4 p-3 bg-pink-100 border border-pink-300 rounded-lg">
           <p className="text-xs text-pink-700">
-            💡 <strong>İpucu:</strong> Birden fazla oda tipi istiyorsanız "Birden fazla seçenek uygun" seçeneğini kullanabilir ve detayları aşağıda belirtebilirsiniz.
+            Birden fazla oda tipi istiyorsanız "Birden fazla seçenek uygun" seçeneğini kullanabilir ve detayları aşağıda belirtebilirsiniz.
           </p>
         </div>
       )}
