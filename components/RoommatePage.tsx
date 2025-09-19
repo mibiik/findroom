@@ -103,6 +103,20 @@ export const RoommatePage: React.FC<RoommatePageProps> = ({
 
   return (
     <div className="space-y-8">
+      {/* Sistem Güncellemesi Bilgilendirmesi */}
+      <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+        <div className="flex items-start">
+          <div className="w-5 h-5 text-orange-600 mt-0.5 mr-3 flex-shrink-0">⚠️</div>
+          <div>
+            <h3 className="text-sm font-medium text-orange-800 mb-1">Sistem Güncellemesi</h3>
+            <p className="text-sm text-orange-700">
+              <strong>Eğer daha önce oda arkadaşı araması yaptıysanız bu silinmedi.</strong> 
+              Sadece sistem güncellemesi yüzünden sizin sayfanızdan gitti. İsterseniz tekrar oluşturun.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Roommate Search Form */}
       {showForm && (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">

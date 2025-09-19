@@ -149,6 +149,20 @@ export const MyListingPage: React.FC<MyListingPageProps> = ({
 
   return (
     <div className="space-y-8">
+      {/* Sistem Güncellemesi Bilgilendirmesi */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="flex items-start">
+          <ExclamationTriangleIcon className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+          <div>
+            <h3 className="text-sm font-medium text-blue-800 mb-1">Sistem Güncellemesi</h3>
+            <p className="text-sm text-blue-700">
+              <strong>Talebiniz burada görünmüyorsa şu an endişe etmeyin, Keşfet'te var.</strong> 
+              İsterseniz tekrar oluşturun ve eşleşmeleri görün. Sistem güncellemesi için özür dileriz.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Talep Oluşturma/Düzenleme Bölümü */}
       {showForm && (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
